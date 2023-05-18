@@ -1,10 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
-	"math/rand"
 	"os"
 	"path/filepath"
 
@@ -28,12 +28,15 @@ var (
 	//seed = time.Now().Unix()
 
 	// Number of generation to loop through
-	noGen = 100
+	noGen = 6000
 	// Population Size
 	popSize = 200
 )
 
 func main() {
+	filename := flag.String("file", "city.txt", "podaj ścieżkę do pliku txt z miastami")
+	flag.Parse()
+
 	fmt.Println("Traveling sales person")
 	// Enable/disable logger
 	if enablelogging {
@@ -49,19 +52,26 @@ func main() {
 	}
 
 	// Set seed value for default source
-	rand.Seed(seed)
-	fmt.Println("seed: ", seed)
+	// rand.Seed(seed)
+	// fmt.Println("seed: ", seed)
 
 	// Init TourManager
 	tm := base.TourManager{}
 	tm.NewTourManager()
 
 	// Generate Cities
-	var cities []base.City
-	cities = *initRandomCities(20)
 
+	cities, err := base.ReadCitiesFromFile(*filename)
+	if err != nil {
+		log.Fatalf("error opening file: %v\n", err)
+	}
+
+	citiesGreedy := base.NearestNeighbor(cities)
+	fmt.Print(base.CalculateTotalDistance(citiesGreedy))
+
+	citiesGreedy = citiesGreedy[:len(citiesGreedy)-1]
 	// Add cities to TourManager
-	for _, v := range cities {
+	for _, v := range citiesGreedy {
 		tm.AddCity(v)
 	}
 
@@ -128,10 +138,8 @@ func tspGA(tm *base.TourManager, gen int) {
 // Save tour as graph
 func visualization(t *base.Tour, gen int, rseed int64) {
 	// Init plot
-	p, err := plot.New()
-	if err != nil {
-		panic(err)
-	}
+	p := plot.New()
+
 	// Set plot styles
 	p.Title.Text = fmt.Sprintf("Seed: %d, Generation %d, Tour Distance: %f", rseed, gen, t.TourDistance())
 	p.X.Label.Text = "X"
@@ -141,11 +149,12 @@ func visualization(t *base.Tour, gen int, rseed int64) {
 	// Construct points with labels
 	pts_labels := TourToPoints(t)
 	// Plot points
-	err = plotutil.AddLinePoints(p, pts_labels)
-	if err != nil {
-		panic(err)
-	}
-	// Create Labels plotter
+	plotutil.AddLinePoints(p, pts_labels)
+	// err =
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// // Create Labels plotter
 	plabels, err := plotter.NewLabels(pts_labels)
 	if err != nil {
 		panic(err)
