@@ -14,7 +14,8 @@ func TestTsp(t *testing.T) {
 	tm.AddCity(base.GenerateRandomCity())
 	tm.AddCity(base.GenerateRandomCity())
 	tm.AddCity(base.GenerateRandomCity())
+	tr := &base.TourManager{}
 
-	TspGA(tm, 20)
+	TspGA(tm, tr, 20)
 	t.Fail()
 }

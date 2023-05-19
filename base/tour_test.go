@@ -15,6 +15,9 @@ func TestTourDistance(t *testing.T) {
 	tm := base.TourManager{}
 	tm.NewTourManager()
 
+	tr := base.TourManager{}
+	tr.NewTourManager()
+
 	// Generate Cities
 	cities := *initializeSampleCities()
 
@@ -25,7 +28,7 @@ func TestTourDistance(t *testing.T) {
 
 	// Init population
 	p := base.Population{}
-	p.InitPopulation(50, tm)
+	p.InitPopulation(50, tm, tr)
 	fmt.Println("Find........")
 	allDistances := make([]float64, 0, 20)
 	shortest := p.GetTour(0).TourDistance()

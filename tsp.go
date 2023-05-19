@@ -10,9 +10,9 @@ import (
 
 // tspGA : Travelling sales person with genetic algorithm
 // input :- TourManager, Number of generations
-func TspGA(tm *base.TourManager, gen int) {
+func TspGA(tm *base.TourManager, trandom *base.TourManager, gen int) {
 	p := base.Population{}
-	p.InitPopulation(1, *tm)
+	p.InitPopulation(1, *tm, *trandom)
 
 	// Get initial fittest tour and it's tour distance
 	fmt.Println("Start....")

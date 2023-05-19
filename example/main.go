@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"os"
 	"path/filepath"
 
@@ -19,7 +21,7 @@ import (
 
 var (
 	// For development purpose
-	enablelogging = true
+	enablelogging = false
 
 	// To store results
 	rootpath = "tsp"
@@ -28,9 +30,9 @@ var (
 	//seed = time.Now().Unix()
 
 	// Number of generation to loop through
-	noGen = 6000
+	noGen = 10000
 	// Population Size
-	popSize = 200
+	popSize = 300
 )
 
 func main() {
@@ -55,37 +57,67 @@ func main() {
 	// rand.Seed(seed)
 	// fmt.Println("seed: ", seed)
 
-	// Init TourManager
-	tm := base.TourManager{}
-	tm.NewTourManager()
+	var choose int
+	fmt.Println("1 - wygeneruj plik, 2 - algorytm genetyczny dla pliku we fladze")
+	fmt.Scanln(&choose)
 
-	// Generate Cities
+	switch choose {
+	case 1:
+		var amount int
+		fmt.Println("Podaj ile miast ma być wygenerowane")
+		fmt.Scanln(&amount)
+		file, err := base.GenerateTxtInstance(amount)
+		if err != nil {
+			log.Fatal()
+		}
+		fmt.Printf("utworzono plik %s", file)
 
-	cities, err := base.ReadCitiesFromFile(*filename)
-	if err != nil {
-		log.Fatalf("error opening file: %v\n", err)
+	case 2:
+		// Init TourManager
+		tm := base.TourManager{}
+		tm.NewTourManager()
+
+		trandom := base.TourManager{}
+		trandom.NewTourManager()
+
+		// Generate Cities
+
+		cities, err := base.ReadCitiesFromFile(*filename)
+		if err != nil {
+			log.Fatalf("error opening file: %v\n", err)
+		}
+
+		citiesGreedy := base.NearestNeighbor(cities)
+		fmt.Println(base.CalculateTotalDistance(citiesGreedy))
+
+		citiesGreedy = citiesGreedy[:len(citiesGreedy)-1]
+
+		// Generate Cities
+		citiesRandom := base.ShuffleCities(cities)
+
+		// Add cities to TourManager
+		for _, v := range citiesRandom {
+			trandom.AddCity(v)
+		}
+		fmt.Println(trandom)
+		// Add cities to TourManager
+		for _, v := range citiesGreedy {
+			tm.AddCity(v)
+		}
+
+		//tspRandom()
+		log.Println("Initialization completed")
+		log.Println("Begin genetic algorithm")
+		tspGA(&tm, &trandom, noGen)
+
 	}
-
-	citiesGreedy := base.NearestNeighbor(cities)
-	fmt.Print(base.CalculateTotalDistance(citiesGreedy))
-
-	citiesGreedy = citiesGreedy[:len(citiesGreedy)-1]
-	// Add cities to TourManager
-	for _, v := range citiesGreedy {
-		tm.AddCity(v)
-	}
-
-	//tspRandom()
-	log.Println("Initialization completed")
-	log.Println("Begin genetic algorithm")
-	tspGA(&tm, noGen)
 }
 
 // tspGA : Travelling sales person with genetic algorithm
 // input :- TourManager, Number of generations
-func tspGA(tm *base.TourManager, gen int) {
+func tspGA(tm *base.TourManager, trandom *base.TourManager, gen int) {
 	p := base.Population{}
-	p.InitPopulation(popSize, *tm)
+	p.InitPopulation(popSize, *tm, *trandom)
 
 	// Get initial fittest tour and it's tour distance
 	fmt.Println("Start....")
@@ -200,7 +232,32 @@ func initRandomCities(cityCount int) *[]base.City {
 	cities := make([]base.City, 0, cityCount)
 
 	for i := 0; i < cityCount; i++ {
-		cities = append(cities, base.GenerateRandomCity())
+		cities = append(cities, base.GenerateCityOudside(i+1, rand.Intn(2000), rand.Intn(2000)))
 	}
 	return &cities
+}
+
+func GenerateTxtInstance(citiesAmount int) (string, error) {
+	var newFileName string
+	fmt.Println("Podaj nazwę nowego pliku")
+	fmt.Scanln(&newFileName)
+
+	fileNew, err := os.Create(newFileName)
+	if err != nil {
+		log.Fatal()
+	}
+	defer fileNew.Close()
+
+	writer := bufio.NewWriter(fileNew)
+
+	fmt.Fprintf(fileNew, "%d\n", citiesAmount)
+	writer.Flush()
+
+	for i := 0; i < citiesAmount; i++ {
+		x := rand.Intn(2000)
+		y := rand.Intn(2000)
+		fmt.Fprintf(writer, "%d %d %d\n", i+1, x, y)
+		writer.Flush()
+	}
+	return newFileName, err
 }

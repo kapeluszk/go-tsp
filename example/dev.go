@@ -24,12 +24,10 @@ func devTest() {
 
 // Functions below are for experimentation
 func plotTest() {
-	//cities := *initializeSampleCities()
-	cities := *initRandomCities(20)
-	p, err := plot.New()
-	if err != nil {
-		panic(err)
-	}
+	cities := *initializeSampleCities()
+	//cities := *initRandomCities(20)
+	p := plot.New()
+
 	p.Title.Text = "Test Plot ABC"
 	p.X.Label.Text = "X"
 	p.Y.Label.Text = "Y"
@@ -37,7 +35,7 @@ func plotTest() {
 
 	pts := citiesToPoints2(&cities)
 	// Plot, Add lines and points
-	err = plotutil.AddLinePoints(p, pts)
+	err := plotutil.AddLinePoints(p, pts)
 	if err != nil {
 		panic(err)
 	}

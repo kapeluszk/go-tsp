@@ -10,8 +10,9 @@ import (
 // Genetic Algorithm Parameters
 var (
 	mutationRate        float64 = 0.015
-	tournamentSize      int     = 40
+	tournamentSize      int     = 10
 	elitism             bool    = true
+	elitismAmount       int     = 40
 	randomCrossoverRate         = false
 	defCrossoverRate    float32 = 0.7
 )
@@ -129,8 +130,11 @@ func EvolvePopulation(pop base.Population) base.Population {
 
 	popOffset := 0
 	if elitism {
-		npop.SaveTour(0, *pop.GetFittest())
-		popOffset = 1
+		top := pop.GetTop(elitismAmount)
+		for i, tour := range top {
+			npop.SaveTour(i, tour)
+		}
+		popOffset = elitismAmount
 	}
 
 	for i := popOffset; i < npop.PopulationSize(); i++ {

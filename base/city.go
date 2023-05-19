@@ -212,3 +212,20 @@ func CalculateTotalDistance(tour []City) float64 {
 	}
 	return totalDistance
 }
+
+func initRandomCities(cityCount int) *[]City {
+	cities := make([]City, 0, cityCount)
+
+	for i := 0; i < cityCount; i++ {
+		cities = append(cities, GenerateRandomCity())
+	}
+	return &cities
+}
+
+func GenerateCityOudside(num, xArg, yArg int) City {
+	return City{
+		number: num,
+		x:      xArg,
+		y:      yArg,
+	}
+}

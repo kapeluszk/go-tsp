@@ -5,14 +5,14 @@ import (
 )
 
 type Tour struct {
-	tourCities []City
+	TourCities []City
 	fitness    float64
 	distance   float64
 }
 
 // InitTour : Initialize tour with cities arranged randomly
 func (a *Tour) InitTour(numberOfCities int) {
-	a.tourCities = make([]City, numberOfCities)
+	a.TourCities = make([]City, numberOfCities)
 }
 
 // InitTourCities
@@ -23,17 +23,17 @@ func (a *Tour) InitTourCities(tm TourManager) {
 		a.SetCity(i, tm.GetCity(i))
 	}
 	// Shuffle cities in tour
-	a.tourCities = ShuffleCities(a.tourCities)
+	//a.tourCities = ShuffleCities(a.tourCities)
 }
 
 // GetCity : Get city based on position in slice
 func (a *Tour) GetCity(tourPosition int) City {
-	return a.tourCities[tourPosition]
+	return a.TourCities[tourPosition]
 }
 
 // SetCity : Set position of city in tour slice
 func (a *Tour) SetCity(tourPosition int, c City) {
-	a.tourCities[tourPosition] = c
+	a.TourCities[tourPosition] = c
 	// Reset fitness if tour have been altered
 	a.fitness = 0
 	a.distance = 0
@@ -45,7 +45,7 @@ func (a *Tour) ResetFitnessDistance() {
 }
 
 func (a *Tour) TourSize() int {
-	return len(a.tourCities)
+	return len(a.TourCities)
 }
 
 // TourDistance : Calculates total distance traveled for this tour
@@ -75,7 +75,7 @@ func (a *Tour) Fitness() float64 {
 }
 
 func (a *Tour) ContainCity(c City) bool {
-	for _, cs := range a.tourCities {
+	for _, cs := range a.TourCities {
 		if cs == c {
 			return true
 		}
@@ -85,7 +85,7 @@ func (a *Tour) ContainCity(c City) bool {
 
 func (a Tour) String() string {
 	s := "|"
-	for i, c := range a.tourCities {
+	for i, c := range a.TourCities {
 		s += strconv.Itoa(i) + c.String() + "|"
 	}
 	return s
