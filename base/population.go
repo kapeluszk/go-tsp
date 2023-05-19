@@ -15,7 +15,7 @@ func (a *Population) InitEmpty(pSize int) {
 
 func (a *Population) InitPopulation(pSize int, tm, tr TourManager) {
 	a.tours = make([]Tour, pSize)
-	tmp := float64(pSize) * 0.99
+	tmp := float64(pSize) * 0.95
 
 	for i := 0; i < pSize; i++ {
 		nT := Tour{}

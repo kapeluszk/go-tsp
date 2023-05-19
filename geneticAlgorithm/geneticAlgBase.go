@@ -9,7 +9,7 @@ import (
 
 // Genetic Algorithm Parameters
 var (
-	mutationRate        float64 = 0.015
+	mutationRate        float64 = 0.025
 	tournamentSize      int     = 10
 	elitism             bool    = true
 	elitismAmount       int     = 40

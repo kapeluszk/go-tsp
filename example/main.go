@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/the-clothing-loop/go-tsp/base"
 	ga "github.com/the-clothing-loop/go-tsp/geneticAlgorithm"
@@ -26,17 +27,17 @@ var (
 	// To store results
 	rootpath = "tsp"
 	// Define seed for default rand
-	seed = int64(1504372704)
-	//seed = time.Now().Unix()
+	// seed = int64(15042)
+	seed = time.Now().Unix()
 
 	// Number of generation to loop through
 	noGen = 10000
 	// Population Size
-	popSize = 300
+	popSize = 500
 )
 
 func main() {
-	filename := flag.String("file", "city.txt", "podaj ścieżkę do pliku txt z miastami")
+	filename := flag.String("file", "berlin52.txt", "podaj ścieżkę do pliku txt z miastami")
 	flag.Parse()
 
 	fmt.Println("Traveling sales person")
@@ -99,7 +100,7 @@ func main() {
 		for _, v := range citiesRandom {
 			trandom.AddCity(v)
 		}
-		fmt.Println(trandom)
+
 		// Add cities to TourManager
 		for _, v := range citiesGreedy {
 			tm.AddCity(v)
